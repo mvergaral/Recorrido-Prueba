@@ -1,0 +1,50 @@
+<select class="form-select appearance-none
+            block
+            w-full
+            px-3
+            py-1.5
+            text-base
+            font-normal
+            text-gray-700
+            bg-white bg-clip-padding bg-no-repeat
+            border border-solid border-gray-300
+            rounded
+            transition
+            ease-in-out
+            m-0
+            focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none" id="company-selector" onchange="redirect_to_engineer_turns(<%= company_id %> ,this.value)">
+    
+    <% if weeks > 0 %>
+        <% (weeks).downto(1).each do |i| %>
+            <% select_date = i.week.ago.at_beginning_of_week.to_date %>
+            
+            <% if  date == select_date %>
+                <option value="<%= select_date %>" selected>Semana <%= select_date.strftime("%W")%> del <%= select_date.strftime("%Y")%></option>
+            <% else %>
+                <option value="<%= select_date %>" >Semana <%= select_date.strftime("%W")%> del <%= select_date.strftime("%Y")%></option>
+            <% end %>
+        <% end %>
+    <% end %>
+
+    <% if date == Date.today.at_beginning_of_week.to_date %>
+        <option value="<%= Date.today.at_beginning_of_week.to_date %>" selected>Semana <%= Date.today.at_beginning_of_week.strftime("%W")%> del <%= Date.today.at_beginning_of_week.strftime("%Y")%></option>
+    <% else %>
+        <option value="<%= Date.today.at_beginning_of_week.to_date %>" >Semana <%= Date.today.at_beginning_of_week.strftime("%W")%> del <%= Date.today.at_beginning_of_week.strftime("%Y")%></option>
+    <% end %>
+    
+    <% 5.times do |i| %>
+        <% select_date = (i+1).week.from_now.at_beginning_of_week.to_date %>
+        <% if  date == select_date %>
+            <option value="<%= select_date %>" selected>Semana <%= select_date.strftime("%W")%> del <%= select_date.strftime("%Y")%></option>
+        <% else %>
+            <option value="<%= select_date %>" >Semana <%= select_date.strftime("%W")%> del <%= select_date.strftime("%Y")%></option>
+        <% end %>
+    <% end %>
+</select>
+
+<script>
+    function redirect_to_engineer_turns(company_id, date) {
+        window.location.href = "/companies/" + company_id + "/company_turns_week_schedule?date=" + date;
+    }
+</script>
+

@@ -1,0 +1,47 @@
+<%= form_with(model: company, class: "contents") do |form| %>
+  <% if company.errors.any? %>
+    <div id="error_explanation" class="bg-red-50 text-red-500 px-3 py-2 font-medium rounded-lg mt-3">
+      <h2><%= pluralize(company.errors.count, "error") %> prohibited this company from being saved:</h2>
+
+      <ul>
+        <% company.errors.each do |error| %>
+          <li><%= error.full_message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="my-5 w-1/3">
+    <%= form.label :name %>
+    <%= form.text_field :name, class: "block shadow rounded-md border border-gray-200 outline-none px-3 py-2 mt-2 w-full" %>
+  </div>
+
+  <div class="my-5 w-1/3">
+    <%= form.collection_check_boxes :engineer_ids, Engineer.all, :id, :name, include_hidden: false do |b| %>
+      <%= b.check_box %> <%= b.label %>
+    <% end %>
+  </div>
+
+  <div class="my-5">
+    <label for="schedule[:monday]" class="mb-2 text-sm font-medium text-gray-900 ">Lunes</label>
+    <%= form.time_field :monday, class:'mr-2' %>
+    <label for="schedule[:tuesday]" class="mb-2 text-sm font-medium text-gray-900 ">Martes</label>
+    <%= form.time_field :tuesday, class:'mr-2'  %>
+    <label for="schedule[:wednesday]" class="mb-2 text-sm font-medium text-gray-900 ">Miercoles</label>
+    <%= form.time_field :wednesday, class:'mr-2'  %>
+    <label for="schedule[:thursday]" class="mb-2 text-sm font-medium text-gray-900 ">Jueves</label>
+    <%= form.time_field :thursday, class:'mr-2'  %>
+    <label for="schedule[:friday]" class="mb-2 text-sm font-medium text-gray-900 ">Viernes</label>
+    <%= form.time_field :friday, class:'mr-2'  %>
+    <label for="schedule[:saturday]" class="mb-2 text-sm font-medium text-gray-900 ">Sabado</label>
+    <%= form.time_field :saturday, class:'mr-2'  %>
+    <label for="schedule[:sunday]" class="mb-2 text-sm font-medium text-gray-900 ">Domingo</label>
+    <%= form.time_field :sunday %>
+  </div>
+
+
+
+  <div class="inline">
+    <%= form.submit class: "rounded-lg py-3 px-5 bg-blue-600 text-white inline-block font-medium cursor-pointer" %>
+  </div>
+<% end %>

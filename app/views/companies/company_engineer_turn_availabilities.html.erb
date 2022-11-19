@@ -1,0 +1,82 @@
+<%= form_with(url: company_update_turn_availabilities_url(company_id: @company.id, engineer_id: @engineer) , method: :post, local: true) do |form| %>
+    <%= form.hidden_field :date, value: @date %>
+    
+    <div class="grid grid-rows-8 grid-cols-6 gap-4">
+        <div class="col-span-4 col-start-2">
+            <h4 class="text-center mb-4 text-2xl font-extrabold tracking-tight leading-none text-gray-900 md:text-3xl lg:text-4xl ">Disponibilidad de <%= @engineer.name %></h4>
+        </div>
+        <div class="row-start-2">
+            <%= form.submit "Editar disponibilidad", class: "rounded-lg py-3 px-5 bg-blue-600 text-white inline-block font-medium cursor-pointer" %>
+        </div>
+        <div class="row-start-2 col-start-1 col-span-1" >
+        
+            
+            <select class="form-select appearance-none
+            block
+            w-full
+            px-3
+            py-1.5
+            text-base
+            font-normal
+            text-gray-700
+            bg-white bg-clip-padding bg-no-repeat
+            border border-solid border-gray-300
+            rounded
+            transition
+            ease-in-out
+            m-0
+            focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none" id="company-selector" onchange="redirect_to_engineer_turns(<%= @company.id %> ,this.value)">
+                <% @company_engineers.each do |e| %>
+                    <% if e.id == @engineer.id %>
+                        <option value="<%= e.id %>" selected><%= e.name %></option>
+                    <% else %>
+                        <option value="<%= e.id %>"><%= e.name %></option>
+                    <% end %>
+                <% end %>
+            </select>
+            
+        </div>
+        <div class='row-start-2 row-span-6 col-start-2 col-span-4'>
+            <table class="table-auto">
+                <thead>
+                    <tr>
+                        <th class="border px-4 py-2">Horario</th>
+                        <% @days.each do |day| %>
+                            <th class="border px-4 py-2"><%= day.strftime("%A") %></th>   
+                        <% end %>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% @turns_hours.each do |time_range, start_hour|%>
+                        <tr>
+                            <td class="border px-4 py-2"><%= time_range %></td>
+                            <% @days.each do |day| %>
+                                <% engineer_turn_availability = @engineer_turn_availabilities.where(date: day.to_datetime + start_hour.hours).first %>
+                                <% if engineer_turn_availability.present?%>
+                                    <td class="border px-4 py-2">
+                                        <%= form.check_box :turn_availability_ids, {multiple: true, checked: engineer_turn_availability.available?}, engineer_turn_availability.id, nil %>
+                                    </td>
+                                <% else %>
+                                    <td class="border px-4 py-2"></td>
+                                <% end %>
+                            
+                            <% end %>
+                        </tr>
+                    <% end %>
+                </tbody>
+            </table>
+                
+        </div>
+    </div>
+<% end %>
+
+<script>
+    function redirect_to_engineer_turns(company_id, engineer_id) {
+        window.location.href = "/companies/" + company_id + "/company_engineer_turn_availabilities?date=" + "<%= @date %>" + "&engineer_id=" + engineer_id;
+    }
+</script>
+
+
+
+
+

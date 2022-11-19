@@ -1,0 +1,102 @@
+
+
+<div class="grid grid-rows-8 grid-cols-3 gap-4">    
+    <div class="col-span-1 col-start-2">
+        <h4 class="mb-4 text-2xl font-extrabold tracking-tight leading-none text-gray-900 md:text-3xl lg:text-4xl">Turnos Asignados</h4>
+    </div>
+    <div class="col-span-1 col-start-3">
+        <% if !@company.engineers.empty? %>
+            <%= link_to 'Editar Disponibilidad', company_edit_turn_availabilities_path(@company, engineer_id: @company.engineers.first, date: @date),  class: "mt-2 rounded-lg py-3 px-5 bg-blue-600 text-white inline-block font-medium"%>
+        <% end %>
+    </div>
+    <div class="row-start-2 col-start-1 col-span-1" >
+        <div class="mb-3 xl:w-96"> 
+            <select class="form-select appearance-none
+            block
+            w-full
+            px-3
+            py-1.5
+            text-base
+            font-normal
+            text-gray-700
+            bg-white bg-clip-padding bg-no-repeat
+            border border-solid border-gray-300
+            rounded
+            transition
+            ease-in-out
+            m-0
+            focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none" id="company-selector" onchange="redirect_to_company(this.value)">
+                <% Company.all.each do |c| %>
+                    <% if c.id == @company.id %>
+                        <option value="<%= c.id %>" selected><%= c.name %></option>
+                    <% else %>
+                        <option value="<%= c.id %>"><%= c.name %></option>
+                    <% end %>
+                <% end %>
+            </select>
+        </div>
+
+        <%= render partial: 'week_selector', locals: {company_id: @company.id, weeks: @weeks, date: @date} %>
+
+        <p class="ml-1 mt-3 mb-4 text-3lg font-extrabold text-gray-900 md:text-2lg lg:text-3lg">Del <%= @days.first.strftime('%m/%d/%Y') %> al <%= @days.last.strftime('%m/%d/%Y') %></p>
+
+        
+    </div>
+    <div class='row-start-3 col-start-1 col-span-1'>
+        <table class="table-auto">
+            <thead></thead>
+            <tbody>
+                <% @count_turns_per_engineer.each do |name, count| %>
+                    <tr>
+                        <td class="border px-4 py-2"><%= name %></td>
+                        <td class="border px-4 py-2"><%= count %></td>
+                    </tr>
+                <% end %>
+            </tbody>
+        </table>
+    </div>
+
+    <div class='row-start-2 row-span-6 col-start-2 col-span-2'>
+        <table class="table-auto">
+            <thead>
+                <tr>
+                    <th class="border px-4 py-2">Horario</th>
+                    <th class="border px-4 py-2">Lunes</th>
+                    <th class="border px-4 py-2">Martes</th>
+                    <th class="border px-4 py-2">Miércoles</th>
+                    <th class="border px-4 py-2">Jueves</th>
+                    <th class="border px-4 py-2">Viernes</th>
+                    <th class="border px-4 py-2">Sábado</th>
+                    <th class="border px-4 py-2">Domingo</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% @turns_hours.each do |time_range, start_hour|%>
+                    <tr>
+                        <td class="border px-4 py-2 bg-green-600"><%= time_range %></td>
+                        <% @days.each do |day| %>
+                            <% turn = @turns.where(date: day.to_datetime + start_hour.hours).first %>
+                            <% if turn.present? %>
+                                <% if turn.engineer.present? %>
+                                    <td class="border px-4 py-2 bg-green-300 text-center" ><%= turn.engineer.name %></td>
+                                <% else %>
+                                    <td class="border px-4 py-2 text-center"><i class="fa-solid fa-triangle-exclamation text-yellow-600"></i></td>
+                                <% end %>
+                            <% else %>
+                                <td class="px-4 py-2 bg-gray-200"></td>
+                            <% end %>
+                            </td>
+                        <% end %>
+                    </tr>
+                <% end %>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script>
+    function redirect_to_company(company_id) {
+        window.location.href = "/companies/" + company_id + "/company_turns_week_schedule";
+    }
+</script>
+
