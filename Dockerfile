@@ -29,7 +29,6 @@ COPY Gemfile.lock $APP_HOME/Gemfile.lock
 RUN gem install bundler -v ${BUNDLER_VERSION} && \
     bundle install
 
-RUN bundle exec rake assets:precompile
 RUN rails tailwindcss:build
 
 
